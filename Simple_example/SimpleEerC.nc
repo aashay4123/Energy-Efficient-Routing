@@ -137,7 +137,10 @@ implementation {
 		
 		msg->flag = 0xFF;
 		msg->count = count++;
-		msg->payload = "Hello, World!";
+    const char* message = "Hello, World!";
+    for (int i = 0; i < 13; i++) {  // Safely include the null terminator
+        msg->payload[i] = (nx_uint8_t)message[i];
+    }
 
 
 	

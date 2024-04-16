@@ -47,7 +47,7 @@
 typedef nx_struct r_msg{
 	nx_uint16_t flag;
 	nx_uint16_t count;
-	nx_uint8_t payload[12];
+	nx_uint8_t payload[13];
 
 } ReadingMsg;
 
