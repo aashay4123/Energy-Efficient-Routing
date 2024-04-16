@@ -44,7 +44,7 @@
 #include <stdlib.h>     // For rand() and srand()
 #include <string.h>     // For memset()
 
-#define MAX_PAYLOAD_LEN 64  // Define the maximum payload length
+// #define MAX_PAYLOAD_LEN 64  // Define the maximum payload length
 #if defined(PRINTF_ENABLED)  || defined(PRINTF_ENABLED_COOJA)
 #include "printf.h"
 #endif

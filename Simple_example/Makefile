@@ -20,7 +20,8 @@ CFLAGS += -DMAX_PARENTSET_SIZE=5
 # (EER) Allowed retransmissions without penalization in the link estimator
 # This value should be less than the default retransmission for each forwarder node
 CFLAGS += -DEER_ALLOWED_RETXS=1
-
+#define MAX_PAYLOAD_LEN 64  // Define the maximum payload length
+CFLAGS += -DMAX_PAYLOAD_LEN=64
 CFLAGS += -DEER_MAX_BEACON_INT=1024*60*30 # 30 minutes
 
 ##################### Set timer parameters ######################################################
