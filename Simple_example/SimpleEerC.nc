@@ -137,7 +137,7 @@ implementation {
 		
 		msg->flag = 0xFF;
 		msg->count = count++;
-    msg->payload = 234567876543
+    msg->payload = 234567876543;
 
 
 	
