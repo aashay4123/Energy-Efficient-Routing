@@ -41,7 +41,11 @@
 
 #include <Timer.h>
 #include "simple_eer.h"
+#include <stdlib.h>     // For rand() and srand()
+#include <string.h>     // For memset()
+#include <time.h>       // For time()
 
+#define MAX_PAYLOAD_LEN 64  // Define the maximum payload length
 #if defined(PRINTF_ENABLED)  || defined(PRINTF_ENABLED_COOJA)
 #include "printf.h"
 #endif
@@ -80,10 +84,6 @@ implementation {
 	#endif
 	
 	uint16_t count = 0;
-	uint16_t voltage;
-	uint16_t temperature;
-	uint16_t humidity;
-	uint16_t adc[7];   // use an array to store adc readings
 
 	// temp variable for loop
 	uint16_t i;
@@ -141,6 +141,12 @@ implementation {
 		msg->flag = 0xFF;
 		msg->count = count++;
 		msg->payload = "Hello World!";
+
+    // // Fill the payload with random letters (A-Z)
+    // for (int i = 0; i < MAX_PAYLOAD_LEN; i++) {
+    //     msg->payload[i] = 'A' + (rand() % 26); // Generate random letters
+    // }
+    // msg->payload[MAX_PAYLOAD_LEN] = '\0'; // Ensure null termination
 	
 		if (call Send.send(&packet, sizeof(ReadingMsg)) == SUCCESS){
 			#if defined(PRINTF_ENABLED)  
