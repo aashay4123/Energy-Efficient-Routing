@@ -51,7 +51,7 @@ module SimpleEerC {
 	uses interface Boot;
 	uses interface SplitControl as RadioControl;
 	uses interface StdControl as RoutingControl;
-	uses interface Send;
+	// uses interface Send;
 	uses interface Timer<TMilli> as DataTimer;
 	
 	#if defined(LED_ENABLED)

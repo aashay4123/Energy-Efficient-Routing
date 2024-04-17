@@ -30,7 +30,7 @@ CFLAGS += -DDATA_RATE=1024*60*1							# 60s
 
 # Enable/Disable summary packets from ctp Instrumentation 
 # also define the interval between each summary packet (in milliseconds)
-CFLAGS += -DSUMMARY_PACKET
+CFLAGS += -DSUMMARY_PACKET=1
 CFLAGS += -DSUMMARY_RATE=1024*60*4							# 4x data packets
 
 #################################################################################################
@@ -52,7 +52,7 @@ CFLAGS += -DRF230_DEF_RFPOWER=0
 
 
 # Enable/disable LEDs (Comment it out to disable LEDs)
-CFLAGS += -DLED_ENABLED
+CFLAGS += -DLED_ENABLED=1
 
 ##################### LPL and compiling path ####################################################
 # Default LPL
