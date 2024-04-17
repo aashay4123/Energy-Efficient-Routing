@@ -73,18 +73,18 @@ implementation {
 
 	//General wiring
 	SimpleEerC.Boot -> MainC;
-	// SimpleEerC.DataTimer -> DataTimerC;
+	SimpleEerC.DataTimer -> DataTimerC;
 	
 	//Wire radio related
 	SimpleEerC.RadioControl -> ActiveMessageC;
 	SimpleEerC.RoutingControl -> Collector;
-	// SimpleEerC.Send -> CollectionSenderC;
+	SimpleEerC.Send -> CollectionSenderC;
 
-	// #if defined(SUMMARY_PACKET)
+	#if defined(SUMMARY_PACKET)
 		//Summary packet rate (seconds)
 		#ifndef SUMMARY_RATE
 		#define SUMMARY_RATE 1024*60*30
-		// #endif
+		#endif
 
 		components EerInstrumentationP;
 		components new TimerMilliC() as SummaryTimerC;

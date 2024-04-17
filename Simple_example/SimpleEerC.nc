@@ -42,7 +42,6 @@
 #include <Timer.h>
 #include "simple_eer.h"
 
-// #define MAX_PAYLOAD_LEN 64  // Define the maximum payload length
 #if defined(PRINTF_ENABLED)  || defined(PRINTF_ENABLED_COOJA)
 #include "printf.h"
 #endif
@@ -51,18 +50,16 @@ module SimpleEerC {
 	uses interface Boot;
 	uses interface SplitControl as RadioControl;
 	uses interface StdControl as RoutingControl;
-	// uses interface Send;
-	// uses interface Timer<TMilli> as DataTimer;
+	uses interface Send;
+	uses interface Timer<TMilli> as DataTimer;
 	
-	// #if defined(LED_ENABLED)
+	#if defined(LED_ENABLED)
 	uses interface Leds;
-	// #endif
+	#endif
 	
-	// #if defined(SUMMARY_PACKET)
 	uses interface Send as SummarySend;
 	uses interface Timer<TMilli> as SummaryTimer;
 	uses interface EerInstrumentation;
-	// #endif
 
 	uses interface RootControl;
 
@@ -75,12 +72,16 @@ implementation {
 	bool dataSendBusy 		= FALSE;
 	
 
-	// #if defined(SUMMARY_PACKET)
+	#if defined(SUMMARY_PACKET)
 	message_t summary_packet;
 	bool summarySendBusy;
-	// #endif
+	#endif
 	
 	uint16_t count = 0;
+	uint16_t voltage;
+	uint16_t temperature;
+	uint16_t humidity;
+	uint16_t adc[7];   // use an array to store adc readings
 
 	// temp variable for loop
 	uint16_t i;
@@ -89,7 +90,7 @@ implementation {
 
 		#if defined(PRINTF_ENABLED)  || defined(PRINTF_ENABLED_COOJA)
 		printf("** Mote booted! **\n");
-		// printfflush();
+		printfflush();
 		#endif
 		call RadioControl.start();
 
@@ -105,7 +106,7 @@ implementation {
 				call RootControl.setRoot();								// USE NODE 1 AS ROOT. THIS NODE PRINTS THE PACKETS FROM THE FORWARDING ENGINE
 				#if defined(PRINTF_ENABLED)  || defined(PRINTF_ENABLED_COOJA)
 				printf("** Root started **\n");
-				// printfflush();
+				printfflush();
 				#endif
 			}
 
@@ -113,15 +114,17 @@ implementation {
 			call RoutingControl.start();
 			if (TOS_NODE_ID != SINK_NODEID){
 				// Data packet timer
-				// call DataTimer.startPeriodic( (uint32_t)DATA_RATE);
+				call DataTimer.startPeriodic( (uint32_t)DATA_RATE);
 			
 				// Summary packet timer
+				#if defined(SUMMARY_PACKET)
 				call SummaryTimer.startPeriodic( (uint32_t)SUMMARY_RATE);
+				#endif	
 
 
 				#if defined(PRINTF_ENABLED)  
 				printf("\nAPP: timers started\n");
-				// printfflush();
+				printfflush();
 				#endif
 			}
 		}
@@ -131,18 +134,15 @@ implementation {
 
 	//task to send our data
 	task void sendMessage() {
-		ReadingMsg* msg = (ReadingMsg*)call SummarySend.getPayload(&packet, sizeof(ReadingMsg));
+		ReadingMsg* msg = (ReadingMsg*)call Send.getPayload(&packet, sizeof(ReadingMsg));
 		
 		msg->flag = 0xFF;
 		msg->count = count++;
-    msg->payload = 876543;
-
-
 	
-		if (call SummarySend.send(&packet, sizeof(ReadingMsg)) == SUCCESS){
+		if (call Send.send(&packet, sizeof(ReadingMsg)) == SUCCESS){
 			#if defined(PRINTF_ENABLED)  
 			printf("APP: send (S)\n");
-			// printfflush();
+			printfflush();
 			#endif
 
 			#if defined(LED_ENABLED)
@@ -154,74 +154,71 @@ implementation {
 			dataSendBusy = FALSE;
 			#if defined(PRINTF_ENABLED)  
 			printf("APP: send (F)\n");
-			// printfflush();
+			printfflush();
 			#endif			
 			}
 	}
 
-	// event void DataTimer.fired() {
+	event void DataTimer.fired() {
 
-	// 	#if defined(LED_ENABLED)
-	// 		call Leds.led1Toggle();	// timer fired, green led blink
-	// 	#endif
+		#if defined(LED_ENABLED)
+			call Leds.led1Toggle();	// timer fired, green led blink
+		#endif
 
-	// 	if (!dataSendBusy || ignoreBusyFlags){
-	// 		dataSendBusy = TRUE;
-	// 		#if defined(LED_ENABLED)
-	// 		call Leds.led2Toggle();	// start reading, yellow led blink
-	// 		#endif
-	// 		#if defined(PRINTF_ENABLED)  
-	// 		printf("APP: Timer: Send message\n");
-	// 		// printfflush();
-	// 		#endif
-	// 		post sendMessage();
-	// 	}
-	// 	else{																// else: skip this reading
-	// 		#if defined(PRINTF_ENABLED)  
-	//   		printf("APP: Timer: BUSY\n");
-	//   		// printfflush();
-	// 		#endif
-	// 	}
+		if (!dataSendBusy || ignoreBusyFlags){
+			dataSendBusy = TRUE;
+			#if defined(LED_ENABLED)
+			call Leds.led2Toggle();	// start reading, yellow led blink
+			#endif
+			#if defined(PRINTF_ENABLED)  
+			printf("APP: Timer: Send message\n");
+			printfflush();
+			#endif
+			post sendMessage();
+		}
+		else{																// else: skip this reading
+			#if defined(PRINTF_ENABLED)  
+	  		printf("APP: Timer: BUSY\n");
+	  		printfflush();
+			#endif
+		}
 
-	// }
-
-
-	// event void Send.sendDone(message_t* m, error_t err) {
-	// 	dataSendBusy = FALSE;
-
-	// 	#if defined(PRINTF_ENABLED)  
-  // 		printf("APP: send done: ");
-	// 	#endif
-
-	// 	if(err == SUCCESS){
-	// 		#if defined(PRINTF_ENABLED)  
-	// 		printf(" (S)\n");
-	// 		#endif
-
-	// 		#if defined(LED_ENABLED)
-	// 		call Leds.led0Off();	// if send successful, red led OFF
-	// 		#endif
-	// 	}
-	// 	else{
-	// 		#if defined(PRINTF_ENABLED)  
-	// 		printf(" (F)\n");
-	// 		#endif
-	// 	}
-	// 	#if defined(PRINTF_ENABLED)  
-	// 		// printfflush();
-	// 	#endif
-	// }
+	}
 
 
-//---------------------------------- SUMMARY PACKET  -----------------------------------//
-// #if defined(SUMMARY_PACKET)	
+	event void Send.sendDone(message_t* m, error_t err) {
+		dataSendBusy = FALSE;
+
+		#if defined(PRINTF_ENABLED)  
+  		printf("APP: send done: ");
+		#endif
+
+		if(err == SUCCESS){
+			#if defined(PRINTF_ENABLED)  
+			printf(" (S)\n");
+			#endif
+
+			#if defined(LED_ENABLED)
+			call Leds.led0Off();	// if send successful, red led OFF
+			#endif
+		}
+		else{
+			#if defined(PRINTF_ENABLED)  
+			printf(" (F)\n");
+			#endif
+		}
+		#if defined(PRINTF_ENABLED)  
+			printfflush();
+		#endif
+	}
+
 
 	event void SummaryTimer.fired() {
 		uint8_t msgsize;
 
 		#if defined(PRINTF_ENABLED)  
 		printf("APP: Summary timer fired\n");
-		// printfflush();
+		printfflush();
 		#endif
 
 		if(!summarySendBusy || ignoreBusyFlags){
@@ -235,14 +232,14 @@ implementation {
 			if (call SummarySend.send(&summary_packet, msgsize) != SUCCESS) {
 				#if defined(PRINTF_ENABLED)  
 				printf("APP: SummaryTimer: Send (F)\n");
-				// printfflush();
+				printfflush();
 				#endif
 			} 
 			else {
 				summarySendBusy = TRUE;
 				#if defined(PRINTF_ENABLED)  
 				printf("APP: SummaryTimer: Send (S)\n");
-				// printfflush();
+				printfflush();
 				#endif
 			}
 		}
@@ -252,13 +249,8 @@ implementation {
 		summarySendBusy = FALSE;
 		#if defined(PRINTF_ENABLED)  
 		printf("APP: Summary pktSend done\n");
-		// printfflush();
+		printfflush();
 		#endif
 	}
-
-// #endif
-
-
-
 
 }
