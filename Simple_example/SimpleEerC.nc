@@ -37,14 +37,11 @@
   * Author: Xiaoyang Zhong
   * Author: Yimei Li
 	* Author: Newlyn Erratt
-  */
+*/
 
 #include <Timer.h>
 #include "simple_eer.h"
-
-#if defined(PRINTF_ENABLED)  || defined(PRINTF_ENABLED_COOJA)
 #include "printf.h"
-#endif
 
 module SimpleEerC {
 	uses interface Boot;
@@ -52,10 +49,7 @@ module SimpleEerC {
 	uses interface StdControl as RoutingControl;
 	uses interface Send;
 	uses interface Timer<TMilli> as DataTimer;
-	
-	#if defined(LED_ENABLED)
 	uses interface Leds;
-	#endif
 	
 	uses interface Send as SummarySend;
 	uses interface Timer<TMilli> as SummaryTimer;
@@ -116,12 +110,7 @@ implementation {
 			
 				// Summary packet timer
 				call SummaryTimer.startPeriodic( (uint32_t)SUMMARY_RATE);
-
-
-				#if defined(PRINTF_ENABLED)  
 				printf("\nAPP: timers started\n");
-				printfflush();
-				#endif
 			}
 		}
 	}

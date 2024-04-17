@@ -80,19 +80,17 @@ implementation {
 	SimpleEerC.RoutingControl -> Collector;
 	SimpleEerC.Send -> CollectionSenderC;
 
-	#if defined(SUMMARY_PACKET)
 		//Summary packet rate (seconds)
-		#ifndef SUMMARY_RATE
-		#define SUMMARY_RATE 1024*60*30
-		#endif
+  #ifndef SUMMARY_RATE
+  #define SUMMARY_RATE 1024*60*30
+  #endif
 
-		components EerInstrumentationP;
-		components new TimerMilliC() as SummaryTimerC;
-		components new CollectionSenderC(0xCD) as SummarySenderC;
-		SimpleEerC.SummarySend -> SummarySenderC;
-		SimpleEerC.SummaryTimer -> SummaryTimerC;
-		SimpleEerC.EerInstrumentation -> EerInstrumentationP;
-	#endif  
+  components EerInstrumentationP;
+  components new TimerMilliC() as SummaryTimerC;
+  components new CollectionSenderC(0xCD) as SummarySenderC;
+  SimpleEerC.SummarySend -> SummarySenderC;
+  SimpleEerC.SummaryTimer -> SummaryTimerC;
+  SimpleEerC.EerInstrumentation -> EerInstrumentationP;
 
 	SimpleEerC.RootControl -> Collector;
 

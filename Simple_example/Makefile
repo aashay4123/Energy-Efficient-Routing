@@ -51,7 +51,7 @@ CFLAGS += -DRF230_DEF_RFPOWER=0
 
 
 # Enable/disable LEDs (Comment it out to disable LEDs)
-#CFLAGS += -DLED_ENABLED
+CFLAGS += -DLED_ENABLED
 
 ##################### LPL and compiling path ####################################################
 # Default LPL
