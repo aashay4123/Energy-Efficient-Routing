@@ -52,17 +52,17 @@ module SimpleEerC {
 	uses interface SplitControl as RadioControl;
 	uses interface StdControl as RoutingControl;
 	// uses interface Send;
-	uses interface Timer<TMilli> as DataTimer;
+	// uses interface Timer<TMilli> as DataTimer;
 	
-	#if defined(LED_ENABLED)
+	// #if defined(LED_ENABLED)
 	uses interface Leds;
-	#endif
+	// #endif
 	
-	#if defined(SUMMARY_PACKET)
+	// #if defined(SUMMARY_PACKET)
 	uses interface Send as SummarySend;
 	uses interface Timer<TMilli> as SummaryTimer;
 	uses interface EerInstrumentation;
-	#endif
+	// #endif
 
 	uses interface RootControl;
 
@@ -75,10 +75,10 @@ implementation {
 	bool dataSendBusy 		= FALSE;
 	
 
-	#if defined(SUMMARY_PACKET)
+	// #if defined(SUMMARY_PACKET)
 	message_t summary_packet;
 	bool summarySendBusy;
-	#endif
+	// #endif
 	
 	uint16_t count = 0;
 
@@ -116,9 +116,7 @@ implementation {
 				call DataTimer.startPeriodic( (uint32_t)DATA_RATE);
 			
 				// Summary packet timer
-				#if defined(SUMMARY_PACKET)
 				call SummaryTimer.startPeriodic( (uint32_t)SUMMARY_RATE);
-				#endif	
 
 
 				#if defined(PRINTF_ENABLED)  
@@ -216,7 +214,7 @@ implementation {
 
 
 //---------------------------------- SUMMARY PACKET  -----------------------------------//
-#if defined(SUMMARY_PACKET)	
+// #if defined(SUMMARY_PACKET)	
 
 	event void SummaryTimer.fired() {
 		uint8_t msgsize;
@@ -258,7 +256,7 @@ implementation {
 		#endif
 	}
 
-#endif
+// #endif
 
 
 
