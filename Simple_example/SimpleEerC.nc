@@ -113,7 +113,7 @@ implementation {
 			call RoutingControl.start();
 			if (TOS_NODE_ID != SINK_NODEID){
 				// Data packet timer
-				call DataTimer.startPeriodic( (uint32_t)DATA_RATE);
+				// call DataTimer.startPeriodic( (uint32_t)DATA_RATE);
 			
 				// Summary packet timer
 				call SummaryTimer.startPeriodic( (uint32_t)SUMMARY_RATE);
@@ -131,15 +131,15 @@ implementation {
 
 	//task to send our data
 	task void sendMessage() {
-		ReadingMsg* msg = (ReadingMsg*)call Send.getPayload(&packet, sizeof(ReadingMsg));
+		ReadingMsg* msg = (ReadingMsg*)call SummarySend.getPayload(&packet, sizeof(ReadingMsg));
 		
 		msg->flag = 0xFF;
 		msg->count = count++;
-    msg->payload = 234567876543;
+    msg->payload = 876543;
 
 
 	
-		if (call Send.send(&packet, sizeof(ReadingMsg)) == SUCCESS){
+		if (call SummarySend.send(&packet, sizeof(ReadingMsg)) == SUCCESS){
 			#if defined(PRINTF_ENABLED)  
 			printf("APP: send (S)\n");
 			// printfflush();
@@ -159,58 +159,58 @@ implementation {
 			}
 	}
 
-	event void DataTimer.fired() {
+	// event void DataTimer.fired() {
 
-		#if defined(LED_ENABLED)
-			call Leds.led1Toggle();	// timer fired, green led blink
-		#endif
+	// 	#if defined(LED_ENABLED)
+	// 		call Leds.led1Toggle();	// timer fired, green led blink
+	// 	#endif
 
-		if (!dataSendBusy || ignoreBusyFlags){
-			dataSendBusy = TRUE;
-			#if defined(LED_ENABLED)
-			call Leds.led2Toggle();	// start reading, yellow led blink
-			#endif
-			#if defined(PRINTF_ENABLED)  
-			printf("APP: Timer: Send message\n");
-			// printfflush();
-			#endif
-			post sendMessage();
-		}
-		else{																// else: skip this reading
-			#if defined(PRINTF_ENABLED)  
-	  		printf("APP: Timer: BUSY\n");
-	  		// printfflush();
-			#endif
-		}
+	// 	if (!dataSendBusy || ignoreBusyFlags){
+	// 		dataSendBusy = TRUE;
+	// 		#if defined(LED_ENABLED)
+	// 		call Leds.led2Toggle();	// start reading, yellow led blink
+	// 		#endif
+	// 		#if defined(PRINTF_ENABLED)  
+	// 		printf("APP: Timer: Send message\n");
+	// 		// printfflush();
+	// 		#endif
+	// 		post sendMessage();
+	// 	}
+	// 	else{																// else: skip this reading
+	// 		#if defined(PRINTF_ENABLED)  
+	//   		printf("APP: Timer: BUSY\n");
+	//   		// printfflush();
+	// 		#endif
+	// 	}
 
-	}
+	// }
 
 
-	event void Send.sendDone(message_t* m, error_t err) {
-		dataSendBusy = FALSE;
+	// event void Send.sendDone(message_t* m, error_t err) {
+	// 	dataSendBusy = FALSE;
 
-		#if defined(PRINTF_ENABLED)  
-  		printf("APP: send done: ");
-		#endif
+	// 	#if defined(PRINTF_ENABLED)  
+  // 		printf("APP: send done: ");
+	// 	#endif
 
-		if(err == SUCCESS){
-			#if defined(PRINTF_ENABLED)  
-			printf(" (S)\n");
-			#endif
+	// 	if(err == SUCCESS){
+	// 		#if defined(PRINTF_ENABLED)  
+	// 		printf(" (S)\n");
+	// 		#endif
 
-			#if defined(LED_ENABLED)
-			call Leds.led0Off();	// if send successful, red led OFF
-			#endif
-		}
-		else{
-			#if defined(PRINTF_ENABLED)  
-			printf(" (F)\n");
-			#endif
-		}
-		#if defined(PRINTF_ENABLED)  
-			// printfflush();
-		#endif
-	}
+	// 		#if defined(LED_ENABLED)
+	// 		call Leds.led0Off();	// if send successful, red led OFF
+	// 		#endif
+	// 	}
+	// 	else{
+	// 		#if defined(PRINTF_ENABLED)  
+	// 		printf(" (F)\n");
+	// 		#endif
+	// 	}
+	// 	#if defined(PRINTF_ENABLED)  
+	// 		// printfflush();
+	// 	#endif
+	// }
 
 
 //---------------------------------- SUMMARY PACKET  -----------------------------------//
