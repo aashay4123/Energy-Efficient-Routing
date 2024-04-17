@@ -72,10 +72,8 @@ implementation {
 	bool dataSendBusy 		= FALSE;
 	
 
-	#if defined(SUMMARY_PACKET)
 	message_t summary_packet;
 	bool summarySendBusy;
-	#endif
 	
 	uint16_t count = 0;
 	uint16_t voltage;
@@ -117,9 +115,7 @@ implementation {
 				call DataTimer.startPeriodic( (uint32_t)DATA_RATE);
 			
 				// Summary packet timer
-				#if defined(SUMMARY_PACKET)
 				call SummaryTimer.startPeriodic( (uint32_t)SUMMARY_RATE);
-				#endif	
 
 
 				#if defined(PRINTF_ENABLED)  
