@@ -47,7 +47,6 @@
 typedef nx_struct r_msg{
 	nx_uint16_t flag;
 	nx_uint16_t count;
-	nx_uint16_t temperature;
 
 } ReadingMsg;
 
