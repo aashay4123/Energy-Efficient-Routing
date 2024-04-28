@@ -71,7 +71,7 @@ implementation {
 	
 	uint16_t count = 0;
 	uint16_t voltage;
-	uint16_t temperature;
+	uint16_t temperature=70;
 	uint16_t humidity;
 	uint16_t adc[7];   // use an array to store adc readings
 
@@ -123,6 +123,7 @@ implementation {
 		
 		msg->flag = 0xFF;
 		msg->count = count++;
+		msg->temperature = temperature;
 	
 		if (call Send.send(&packet, sizeof(ReadingMsg)) == SUCCESS){
 			#if defined(PRINTF_ENABLED)  
