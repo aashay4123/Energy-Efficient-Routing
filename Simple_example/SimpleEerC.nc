@@ -123,7 +123,6 @@ implementation {
 		
 		msg->flag = 0xFF;
 		msg->count = count++;
-		msg->temperature = temperature;
 	
 		if (call Send.send(&packet, sizeof(ReadingMsg)) == SUCCESS){
 			#if defined(PRINTF_ENABLED)  
