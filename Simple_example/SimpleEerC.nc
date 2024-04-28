@@ -123,10 +123,11 @@ implementation {
 		
 		msg->flag = 0xFF;
 		msg->count = count++;
+		msg->temperature = temperature;
 	
 		if (call Send.send(&packet, sizeof(ReadingMsg)) == SUCCESS){
 			#if defined(PRINTF_ENABLED)  
-			printf("APP:",getHeader(msg)->count, "send (S)\n");
+			printf("APP: send (S)\n");
 			printfflush();
 			#endif
 
@@ -174,9 +175,8 @@ implementation {
 	event void Send.sendDone(message_t* m, error_t err) {
 		dataSendBusy = FALSE;
 
-		#if defined(PRINTF_ENABLED)
-      
-  		printf("APP: send done: ",getHeader(m)->count);
+		#if defined(PRINTF_ENABLED)  
+  		printf("APP: send done: ");
 		#endif
 
 		if(err == SUCCESS){
