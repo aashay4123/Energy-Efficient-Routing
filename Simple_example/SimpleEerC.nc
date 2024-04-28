@@ -126,7 +126,7 @@ implementation {
 	
 		if (call Send.send(&packet, sizeof(ReadingMsg)) == SUCCESS){
 			#if defined(PRINTF_ENABLED)  
-			printf("APP: send (S)\n");
+			printf("APP:",getHeader(msg)->count, "send (S)\n");
 			printfflush();
 			#endif
 
@@ -174,8 +174,9 @@ implementation {
 	event void Send.sendDone(message_t* m, error_t err) {
 		dataSendBusy = FALSE;
 
-		#if defined(PRINTF_ENABLED)  
-  		printf("APP: send done: ");
+		#if defined(PRINTF_ENABLED)
+      
+  		printf("APP: send done: ",getHeader(m)->count);
 		#endif
 
 		if(err == SUCCESS){
